@@ -43,9 +43,10 @@ class Snake():
         self.y = y
         self.game_width = game_width
         self.game_height = game_height
-        self.length = 4
-        self.parts = [[x, y]]
+        self.length = 3
+        self.parts = []
         self.dir = 'left'
+        self.last_dir = 'left'
         for i in range(self.length):
             self.parts.append([self.x + i, self.y])
 
@@ -53,13 +54,13 @@ class Snake():
         head_x = self.parts[0][0]
         head_y = self.parts[0][1]
         if self.dir == 'right':
-            self.parts.insert(0, [head_x + 1, 0])
+            self.parts.insert(0, [head_x + 1, head_y])
         elif self.dir == 'left':
-            self.parts.insert(0, [head_x - 1, 0])
+            self.parts.insert(0, [head_x - 1, head_y])
         elif self.dir == 'up':
-            self.parts.insert(0, [0, head_y - 1])
+            self.parts.insert(0, [head_x, head_y - 1])
         elif self.dir == 'down':
-            self.parts.insert(0, [0, head_y + 1])
+            self.parts.insert(0, [head_x, head_y + 1])
         self.parts.pop()
 
     def grow(self):
@@ -91,6 +92,7 @@ class Game_Logic():
         self.ui = UI(self.game_width, self.game_height)
         self.is_running = True
         self.points = 0
+        self.current_game_speed, self.game_speed = 1, 1
 
     def game_loop(self):
         while self.is_running:
@@ -99,6 +101,20 @@ class Game_Logic():
                 if event.type == pygame.QUIT:
                     self.is_running = False
                     sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_s:
+                        self.snake.dir = 'down'
+                    elif event.key == pygame.K_d:
+                        self.snake.dir = 'right'
+                    elif event.key == pygame.K_a:
+                        self.snake.dir = 'left'
+                    elif event.key == pygame.K_w:
+                        self.snake.dir = 'up'
+
+            if self.current_game_speed <= 0:
+                self.current_game_speed = self.game_speed
+                self.snake.move()
+            self.current_game_speed -= 0.1
 
             self.ui.draw(self.points, self.snake.parts)
 
