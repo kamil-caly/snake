@@ -24,6 +24,16 @@ class UI():
         self.screen.blit(surface, score_rect)
 
     def draw_snake(self, snake_parts):
+        big_size = 50
+        small_size = 44
+        big_rect = pygame.Surface((big_size, big_size))
+        big_rect.fill(pygame.Color('#52100b'))
+        small_rect = pygame.Surface((small_size, small_size))
+        small_rect.fill(pygame.Color('#eb4336'))
+
+        for p in snake_parts:
+            self.screen.blit(big_rect, (p[0] * big_size, p[1] * big_size + 50))
+            self.screen.blit(small_rect, (p[0] * big_size + int((big_size - small_size) / 2), p[1] * big_size + int((big_size - small_size) / 2) + 50))
 
 
 
@@ -35,9 +45,9 @@ class Snake():
         self.game_height = game_height
         self.length = 4
         self.parts = [[x, y]]
-        self.dir = 'right'
-        for i in range(self.length - 1):
-            self.parts.append([self.x + 1, self.y])
+        self.dir = 'left'
+        for i in range(self.length):
+            self.parts.append([self.x + i, self.y])
 
     def move(self):
         head_x = self.parts[0][0]
@@ -76,8 +86,8 @@ class Game_Logic():
         pygame.init()
         self.clock = pygame.time.Clock()
         self.game_width = 600
-        self.game_height = 600
-        self.snake = Snake(5, 5, self.game_width, self.game_height)
+        self.game_height = 550
+        self.snake = Snake(5, 0, self.game_width, self.game_height)
         self.ui = UI(self.game_width, self.game_height)
         self.is_running = True
         self.points = 0
