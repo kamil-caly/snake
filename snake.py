@@ -50,6 +50,19 @@ class Snake():
         for i in range(self.length):
             self.parts.append([self.x + i, self.y])
 
+    def change_dir(self, dir):
+        self.dir = dir
+        if self.dir == 'left':
+            self.dir = 'right' if self.last_dir == 'right' else 'left'
+        elif self.dir == 'right':
+            self.dir = 'left' if self.last_dir == 'left' else 'right'
+        elif self.dir == 'up':
+            self.dir = 'down' if self.last_dir == 'down' else 'up'
+        elif self.dir == 'down':
+            self.dir = 'up' if self.last_dir == 'up' else 'down'
+
+        self.last_dir = self.dir
+
     def move(self):
         head_x = self.parts[0][0]
         head_y = self.parts[0][1]
@@ -61,7 +74,9 @@ class Snake():
             self.parts.insert(0, [head_x, head_y - 1])
         elif self.dir == 'down':
             self.parts.insert(0, [head_x, head_y + 1])
+
         self.parts.pop()
+
 
     def grow(self):
         tail = self.parts[self.length - 1]
@@ -103,13 +118,13 @@ class Game_Logic():
                     sys.exit()
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_s:
-                        self.snake.dir = 'down'
+                        self.snake.change_dir('down')
                     elif event.key == pygame.K_d:
-                        self.snake.dir = 'right'
+                        self.snake.change_dir('right')
                     elif event.key == pygame.K_a:
-                        self.snake.dir = 'left'
+                        self.snake.change_dir('left')
                     elif event.key == pygame.K_w:
-                        self.snake.dir = 'up'
+                        self.snake.change_dir('up')
 
             if self.current_game_speed <= 0:
                 self.current_game_speed = self.game_speed
