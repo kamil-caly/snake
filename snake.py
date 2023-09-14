@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame, sys, random
 import numpy as np
 
 class UI():
@@ -97,13 +97,35 @@ class Snake():
         return False
 
 
+class Apple():
+    def __init__(self, snake_parts, game_width, game_height):
+        self.snake_parts = snake_parts
+        self.game_width = game_width
+        self.game_height = game_height
+        self.x, self.y = self.spawn()
+
+    def spawn(self):
+        is_spawn = False
+        while not is_spawn:
+            is_spawn = True
+            x = random.randint(0, self.game_width)
+            y = random.randint(0, self.game_height)
+
+            for p in self.snake_parts:
+                if x == p[0] and y == p[1]:
+                    is_spawn = False
+                    break
+
+        return x, y
+
+
 class Game_Logic():
     def __init__(self):
         pygame.init()
         self.clock = pygame.time.Clock()
         self.game_width = 600
         self.game_height = 550
-        self.snake = Snake(5, 0, self.game_width, self.game_height)
+        self.snake = Snake(5, 0, self.game_width / 50, self.game_height / 50)
         self.ui = UI(self.game_width, self.game_height)
         self.is_running = True
         self.points = 0
