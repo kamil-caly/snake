@@ -12,11 +12,20 @@ class UI():
         self.top = pygame.Surface((self.width, self.heigth))
         self.top.fill(pygame.Color('#2b2b2b'))
 
-    def draw(self, points, snake_parts):
+    def draw(self, points, snake_parts, apple_cords):
         self.screen.blit(self.top, (0, 0))
         self.screen.blit(self.background, (0, 50))
         self.draw_points(pygame.font.Font('font/Pixeltype.ttf', 50), (200, 200, 0), points)
         self.draw_snake(snake_parts)
+        self.draw_apple(apple_cords[0], apple_cords[1])
+
+    def draw_apple(self, x, y):
+        rect_size = 40
+        field_size = 50
+        gap = (50 - rect_size) / 2
+        apple_rect = pygame.Surface((rect_size, rect_size))
+        apple_rect.fill(pygame.Color('#0bfc' + str(random.randint(0, 9)) + str(random.randint(0, 9))))
+        self.screen.blit(apple_rect, (x * field_size + gap, y * field_size + field_size + gap))
 
     def draw_points(self, font, text_color, points):
         surface = font.render(f'Score: {points}', True, text_color)
@@ -96,6 +105,9 @@ class Snake():
 
         return False
 
+    def is_hit_point(self, x, y):
+        return self.parts[0][0] == x and self.parts[0][1] == y
+
 
 class Apple():
     def __init__(self, snake_parts, game_width, game_height):
@@ -108,8 +120,8 @@ class Apple():
         is_spawn = False
         while not is_spawn:
             is_spawn = True
-            x = random.randint(0, self.game_width)
-            y = random.randint(0, self.game_height)
+            x = random.randint(0, self.game_width - 1)
+            y = random.randint(0, self.game_height - 1)
 
             for p in self.snake_parts:
                 if x == p[0] and y == p[1]:
@@ -127,6 +139,7 @@ class Game_Logic():
         self.game_height = 550
         self.snake = Snake(5, 0, self.game_width / 50, self.game_height / 50)
         self.ui = UI(self.game_width, self.game_height)
+        self.apple = Apple(self.snake.parts, self.game_width / 50, self.game_height / 50 - 1)
         self.is_running = True
         self.points = 0
         self.current_game_speed, self.game_speed = 1, 1
@@ -153,10 +166,16 @@ class Game_Logic():
                 self.snake.move()
             self.current_game_speed -= 0.1
 
-            self.ui.draw(self.points, self.snake.parts)
+            if self.snake.is_hit_point(self.apple.x, self.apple.y):
+                self.snake.grow()
+                self.apple = Apple(self.snake.parts, self.game_width / 50, self.game_height / 50 - 1)
+                self.points += 1
+
+            self.ui.draw(self.points, self.snake.parts, [self.apple.x, self.apple.y])
 
             pygame.display.update()
             self.clock.tick(60)
+
 
 game_logic = Game_Logic()
 game_logic.game_loop()
