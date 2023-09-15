@@ -30,9 +30,3 @@ python <filename>.py
 
 ### Screenshot:
 ![image](https://github.com/kamil-caly/snake/assets/66841315/b0e10c8a-f3bc-40fa-81c6-41546d7037ab)
-
-### Contributing:
-Feel free to fork the repository, create a feature branch, and send us a pull request.
-
-### License:
-This project is open-sourced software licensed under the MIT License. (Or whatever license you prefer)
