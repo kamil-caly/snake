@@ -152,13 +152,17 @@ class Game_Logic():
         self.clock = pygame.time.Clock()
         self.game_width = 600
         self.game_height = 550
+        self.is_running = True
+        self.is_game_over = False
+        self.current_game_speed = 1
+        self.init_game_variables()
+
+    def init_game_variables(self):
         self.snake = Snake(5, 0, self.game_width / 50, self.game_height / 50)
         self.ui = UI(self.game_width, self.game_height)
         self.apple = Apple(self.snake.parts, self.game_width / 50, self.game_height / 50 - 1)
-        self.is_running = True
-        self.is_game_over = False
+        self.game_speed = 1
         self.points = 0
-        self.current_game_speed, self.game_speed = 1, 1
 
     def game_loop(self):
         while self.is_running:
@@ -178,11 +182,8 @@ class Game_Logic():
                         self.snake.change_dir('up')
                     elif event.key == pygame.K_SPACE:
                         if self.is_game_over:
+                            self.init_game_variables()
                             self.is_game_over = False
-                            self.snake = Snake(5, 0, self.game_width / 50, self.game_height / 50)
-                            self.ui = UI(self.game_width, self.game_height)
-                            self.apple = Apple(self.snake.parts, self.game_width / 50, self.game_height / 50 - 1)
-                            self.points = 0
 
             if self.is_game_over:
                 self.ui.draw_game_over(self.points)
@@ -197,6 +198,7 @@ class Game_Logic():
                     self.snake.grow()
                     self.apple = Apple(self.snake.parts, self.game_width / 50, self.game_height / 50 - 1)
                     self.points += 1
+                    self.game_speed -= 0.02
 
                 if self.snake.is_collision():
                     self.is_game_over = True
